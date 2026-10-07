@@ -34,3 +34,8 @@ nodes:
     paths:
       - assets/styles
       - src/Asset
+  -
+    code: socle.clients
+    label: Clients
+    position: 0
+    parent: socle
