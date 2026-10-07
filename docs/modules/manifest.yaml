@@ -29,3 +29,5 @@ nodes:
     code: socle
     label: Socle
     position: 0
+    docs:
+      - docs/specs/socle_cree-une-application-symfony-postgre-qui-sera-un-extranet-client-sur-notre-site-web.md
