@@ -13,6 +13,9 @@
 ###> symfony/framework-bundle ###
 /.env.local.php
 /config/secrets/prod/prod.decrypt.private.php
+# Genere a chaque compilation du conteneur en debug (aide a la saisie des
+# fichiers de config PHP). Artefact de build, jamais une source.
+/config/reference.php
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###

@@ -8,6 +8,20 @@ framework:
     # Necessaire a la fonction Twig asset() (favicon, fichiers de public/).
     assets: null
 
+    # ⚠️ `trusted_proxies` / `trusted_headers` NE SONT PAS DECLARES ICI, ET C'EST
+    # VOULU. Leur defaut dans FrameworkBundle lit `SYMFONY_TRUSTED_PROXIES` et
+    # `SYMFONY_TRUSTED_HEADERS` dans l'environnement : l'hote qui sert
+    # l'application derriere un proxy les pose (c'est ce que fait le Dev Center
+    # pour ses environnements de recette), sans qu'on ait a figer ici l'adresse
+    # d'un proxy qu'on ne connait pas. Declarer la moindre valeur ICI ferait
+    # gagner ce fichier sur l'environnement et ferait disparaitre le mecanisme.
+    #
+    # Ce qui en depend : `X-Forwarded-Prefix`, donc la base de la requete, donc
+    # les URL de TOUS les liens et de tous les assets quand l'application est
+    # servie sous un prefixe d'URL. Voir App\Asset\ViteBasePathListener.
+    # Les deux variables sont indissociables : sans `SYMFONY_TRUSTED_HEADERS`,
+    # le noyau retombe sur un jeu d'en-tetes qui n'inclut PAS le prefixe.
+
 when@test:
     framework:
         test: true
