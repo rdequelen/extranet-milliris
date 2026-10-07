@@ -1,0 +1,31 @@
+# Arborescence fonctionnelle de l'intranet MILLIRIS — SOURCE DE VERITE (volet B, D10).
+#
+# Fichier VERSIONNE (pas une table) : le dump nocturne prod->dev ne reinjecte que
+# idea_roadmap_task* et effacerait une table dev-only ; les agents lisent le depot ;
+# git donne la reversibilite d'un deplacement malheureux.
+#
+# EDITE DEPUIS L'INTERFACE (mode « organiser » de l'accueil ROADMAP) : le web delegue au
+# broker millo, qui commit et pousse. Cette entete est regeneree a chaque ecriture ;
+# tout commentaire ajoute dans les noeuds serait perdu.
+#
+# Champs : code (identifiant stable, rattache les tickets) / label / parent / position /
+# fiche (contexte du module) / docs (.MD rattaches) / aliases (valeurs de
+# RoadmapTask.module) / routes (prefixes d'URL -> rattachement des suggestions) /
+# paths (prefixes de CHEMINS DE CODE -> modules cousins impactes par un merge,
+# ticket-153 ; optionnel : sans lui, aucun cousin n'est jamais devine) /
+# heritage (sous-ensemble de docs qui vaut pour TOUTE LA BRANCHE descendante,
+# ticket-165 ; marquage explicite depuis le lecteur de .MD, jamais devine).
+#
+# PROFONDEUR ILLIMITEE (ticket-165, D1/D2) : `parent:` est un simple pointeur, personne
+# n'encode ici une profondeur. Le CODE est un IDENTIFIANT STABLE, pas un chemin : il
+# porte des points parce qu'il est fabrique a partir du parent au moment de la creation,
+# mais AUCUNE hierarchie ne s'en deduit jamais — seul `parent:` fait foi. Apres un
+# deplacement, un noeud peut donc porter un code « historique » qui ne reflete plus sa
+# place : on ne le recalcule pas (il rattache les tickets deja livres et sert de segment
+# d'URL).
+
+nodes:
+  -
+    code: socle
+    label: Socle
+    position: 0
