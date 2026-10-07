@@ -39,3 +39,5 @@ nodes:
     label: Clients
     position: 0
     parent: socle
+    docs:
+      - docs/specs/socle-clients_ajoute-une-couche-de-securite-sur-l-application-on-ne-peut-y-acceder-que-si-l-utilisateur-est-loggue.md
