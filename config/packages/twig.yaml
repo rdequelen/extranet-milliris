@@ -1,0 +1,16 @@
+twig:
+    file_name_pattern: '*.twig'
+
+    globals:
+        # Catalogue des modules : source unique pour la barre laterale, les tuiles
+        # d'accueil et la page « a venir ». Un module qui arrive se declare dans
+        # App\Navigation\ModuleRegistry et nulle part ailleurs.
+        modules: '@App\Navigation\ModuleRegistry'
+
+        # Identite factice de l'en-tete (voir config/services.yaml).
+        client_name: '%app.client_name%'
+        client_role: '%app.client_role%'
+
+when@test:
+    twig:
+        strict_variables: true

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{#
+    Page « a venir » PARTAGEE par tous les volets pas encore ecrits. Elle garde
+    la charte et la navigation : aucune entree de menu ne mene a un ecran mort.
+#}
+
+{% set breadcrumb = [{ label: module.label }] %}
+
+{% block title %}{{ module.label }} — Extranet MILLIRIS{% endblock %}
+
+{% block body %}
+    <div class="socle-page-head">
+        <div class="socle-page-head__text">
+            <h1 class="socle-page-head__title h3">{{ module.label }}</h1>
+            <p class="socle-page-head__lead">{{ module.summary }}</p>
+        </div>
+    </div>
+
+    <div class="socle-placeholder socle-family--{{ module.family.value }}">
+        <span class="socle-placeholder__icon">
+            <i class="bi {{ module.icon }}" aria-hidden="true"></i>
+        </span>
+
+        <h2 class="h5">Ce module n'est pas encore ouvert</h2>
+        <p class="text-body-secondary">
+            Le volet <strong>{{ module.label }}</strong> ({{ module.family.label }}) fait partie du
+            perimetre de l'extranet, mais son contenu reste a livrer. Sa place dans le menu et dans
+            la charte est deja definitive : les prochaines livraisons n'auront qu'a la remplir.
+        </p>
+
+        <a class="btn btn-primary" href="{{ path('app_home') }}">
+            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Retour au tableau de bord
+        </a>
+    </div>
+{% endblock %}

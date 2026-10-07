@@ -1,0 +1,6 @@
+doctrine_migrations:
+    migrations_paths:
+        # Le namespace est arbitraire mais doit differer de App\Migrations :
+        # les classes de migration ne doivent PAS etre autochargees.
+        'DoctrineMigrations': '%kernel.project_dir%/migrations'
+    enable_profiler: false

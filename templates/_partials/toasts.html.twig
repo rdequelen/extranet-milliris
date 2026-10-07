@@ -1,0 +1,15 @@
+{#
+    Pile de toasts, en bas a droite.
+
+    Volontairement VIDE au lot 1. Le lot 3 y empilera les messages de
+    confirmation via Turbo Stream, en ciblant l'identifiant #socle-toasts :
+
+        <turbo-stream action="append" target="socle-toasts"> ... </turbo-stream>
+
+    aria-live="polite" fait annoncer les toasts par un lecteur d'ecran sans
+    interrompre la lecture en cours.
+#}
+<div class="toast-container socle-toasts position-fixed bottom-0 end-0 p-3"
+     id="socle-toasts"
+     aria-live="polite"
+     aria-atomic="true"></div>

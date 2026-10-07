@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord — Extranet MILLIRIS{% endblock %}
+
+{% block body %}
+    <div class="socle-page-head">
+        <div class="socle-page-head__text">
+            <h1 class="socle-page-head__title h3">Bienvenue sur votre extranet</h1>
+            <p class="socle-page-head__lead">
+                Retrouvez ici vos volets de suivi MILLIRIS. Les modules s'ouvriront au fil des livraisons.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-3 g-lg-4">
+        {% for module in modules.all %}
+            <div class="col-12 col-md-6 col-xl-4">
+                <a class="module-tile socle-family--{{ module.family.value }}"
+                   href="{{ path(module.route, module.routeParameters) }}">
+                    <span class="module-tile__top">
+                        <span class="module-tile__icon">
+                            <i class="bi {{ module.icon }}" aria-hidden="true"></i>
+                        </span>
+                        <span class="module-tile__status">{{ module.status.label }}</span>
+                    </span>
+                    <span class="module-tile__title">{{ module.label }}</span>
+                    <span class="module-tile__text">{{ module.summary }}</span>
+                    <span class="module-tile__cta">
+                        {{ module.available ? 'Ouvrir' : 'En savoir plus' }}
+                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                    </span>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

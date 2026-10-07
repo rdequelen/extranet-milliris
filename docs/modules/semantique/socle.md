@@ -1,0 +1,7 @@
+- `src/Navigation/ModuleRegistry.php` — catalogue code-en-dur des modules, source unique lue par le menu, l'accueil et le placeholder
+- `src/Navigation/Module.php` — objet de valeur d'un module (code, label, icone, famille, statut) renvoye par ModuleRegistry
+- `src/Controller/ModuleController.php` — page "a venir" partagee par tous les modules sans route propre, resout `code` via ModuleRegistry
+- `src/Controller/HomeController.php` — page d'accueil, rend les tuiles depuis la variable Twig globale `modules`
+- `assets/controllers/theme_controller.js` — bascule clair/sombre Stimulus, lit/persiste `data-bs-theme` dans localStorage, suit le theme systeme
+- `assets/styles/_brand.scss` — charte de couleurs MILLIRIS, seule source qui surcharge Bootstrap avant compilation
+- `templates/base.html.twig` — gabarit de page, pose le theme initial via script inline avant le premier rendu

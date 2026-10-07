@@ -1,0 +1,92 @@
+{#
+    En-tete de page.
+
+    Attendus (passes par base.html.twig, include `only`) :
+      - breadcrumb   : liste de { label, path? } ; le dernier element est la page courante
+      - page_actions : HTML deja rendu du bloc `page_actions` du gabarit enfant
+
+    Disponibles en global : client_name, client_role (config/packages/twig.yaml).
+#}
+<header class="socle-topbar">
+    <button type="button"
+            class="socle-icon-btn d-lg-none"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#socleSidebar"
+            aria-controls="socleSidebar"
+            aria-label="Ouvrir le menu">
+        <i class="bi bi-list" aria-hidden="true"></i>
+    </button>
+
+    <div class="socle-topbar__trail">
+        <nav aria-label="Fil d'ariane">
+            <ol class="breadcrumb">
+                {% if breadcrumb is empty %}
+                    <li class="breadcrumb-item active" aria-current="page">Accueil</li>
+                {% else %}
+                    <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                {% endif %}
+                {% for step in breadcrumb %}
+                    {% if loop.last or step.path is not defined %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ step.label }}</li>
+                    {% else %}
+                        <li class="breadcrumb-item"><a href="{{ step.path }}">{{ step.label }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        </nav>
+    </div>
+
+    <div class="socle-topbar__actions">
+        {# Zone d'actions de page : remplie par {% block page_actions %} dans les gabarits. #}
+        {% if page_actions|trim is not empty %}
+            <div class="d-flex align-items-center gap-2">{{ page_actions|raw }}</div>
+        {% endif %}
+
+        <button type="button"
+                class="socle-icon-btn"
+                data-controller="theme"
+                data-action="theme#toggle"
+                aria-pressed="false"
+                aria-label="Basculer le theme">
+            <i class="bi bi-moon-stars" data-theme-target="icon" aria-hidden="true"></i>
+        </button>
+
+        {#
+            Bloc identite FACTICE. Il existe pour que le ticket « securite »
+            n'ait qu'a le brancher sur l'utilisateur reel, sans redessiner
+            l'en-tete. « Se deconnecter » est volontairement desactive.
+        #}
+        <div class="dropdown">
+            <button type="button"
+                    class="socle-identity"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                <span class="socle-identity__avatar" aria-hidden="true">{{ client_name|slice(0, 1)|upper }}</span>
+                <span class="socle-identity__text d-none d-sm-block">
+                    <span class="socle-identity__name">{{ client_name }}</span>
+                    <span class="socle-identity__role">{{ client_role }}</span>
+                </span>
+                <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <span class="dropdown-item-text">
+                        <span class="d-block fw-semibold">{{ client_name }}</span>
+                        <span class="d-block small text-body-secondary">{{ client_role }}</span>
+                    </span>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <button type="button" class="dropdown-item" disabled>
+                        <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Se deconnecter
+                    </button>
+                </li>
+                <li>
+                    <span class="dropdown-item-text small text-body-secondary">
+                        Authentification a venir.
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
