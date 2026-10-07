@@ -5,3 +5,5 @@
 - `assets/controllers/theme_controller.js` — bascule clair/sombre Stimulus, lit/persiste `data-bs-theme` dans localStorage, suit le theme systeme
 - `assets/styles/_brand.scss` — charte de couleurs MILLIRIS, seule source qui surcharge Bootstrap avant compilation
 - `templates/base.html.twig` — gabarit de page, pose le theme initial via script inline avant le premier rendu
+- `src/Asset/ViteBasePathListener.php` — ecouteur qui reprefixe href/src des balises Vite par `Request::getBasePath()` sous un prefixe d'URL (recette)
+- `assets/styles/_socle.scss` — styles barre laterale/offcanvas ; `.socle-brand` y est partage entre flex-row (mobile) et flex-column (desktop)
