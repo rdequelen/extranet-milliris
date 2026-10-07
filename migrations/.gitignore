@@ -1,3 +1,4 @@
-# Les migrations Doctrine arrivent au lot 2 (entite DemoItem).
-# Ce fichier existe pour que le repertoire declare dans
-# config/packages/doctrine_migrations.yaml soit present des le lot 1.
+# Ce fichier n'ignore RIEN : il ne porte que ce commentaire. Il existait pour
+# que le repertoire declare dans config/packages/doctrine_migrations.yaml soit
+# versionne avant qu'il n'y ait la moindre migration. Depuis la couche de
+# securite (Version20261007200000), ce repertoire porte de vraies migrations.

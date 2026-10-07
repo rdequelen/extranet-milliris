@@ -542,3 +542,47 @@
 .socle-toasts {
     z-index: 1090;
 }
+
+// -----------------------------------------------------------------------------
+// Tunnel de connexion (ecrans publics)
+// -----------------------------------------------------------------------------
+//
+// Ces ecrans n'ont ni barre laterale ni en-tete : ils remplacent le bloc `page`
+// de base.html.twig par un cadre centre. Le fond reprend le navy du chrome de
+// l'application, pour qu'on sache ou on arrive avant meme d'etre entre.
+
+.socle-auth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem 1rem;
+    background:
+        linear-gradient(
+            160deg,
+            var(--socle-navy) 0%,
+            var(--socle-navy-dark) 100%
+        );
+}
+
+.socle-auth__card {
+    width: 100%;
+    max-width: 27rem;
+    border: 0;
+    border-radius: $border-radius-lg;
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.3);
+}
+
+// La plaque blanche du logo est partagee avec la barre laterale
+// (`.socle-brand__plate`) ; seule sa largeur change ici.
+.socle-auth__brand {
+    width: 11rem;
+    margin: 0 auto 1.5rem;
+}
+
+.socle-auth__icon {
+    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--socle-family-color);
+}

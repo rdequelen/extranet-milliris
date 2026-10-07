@@ -1,0 +1,17 @@
+{#
+    Version texte du courriel de connexion. Elle n'est pas decorative : certains
+    clients de messagerie (et la plupart des filtres anti-pourriel) la lisent en
+    priorite, et un courriel sans partie texte part avec une note de spam plus
+    elevee — or ce courriel est le seul moyen d'entrer dans l'application.
+#}
+MILLIRIS — Extranet client
+
+Bonjour {{ user.firstName|default(user.displayName) }},
+
+Voici votre lien de connexion a l'extranet. Il est valable 5 minutes
+(jusqu'a {{ expires_at|date('H:i') }}) et ne doit etre utilise que par vous.
+
+{{ url }}
+
+Vous n'avez pas demande ce lien ? Ignorez ce message : sans clic, il expire
+tout seul et aucun acces n'est ouvert.

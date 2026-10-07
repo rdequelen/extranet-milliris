@@ -5,21 +5,28 @@ declare(strict_types=1);
 namespace App\Tests\Controller;
 
 use App\Navigation\ModuleRegistry;
+use App\Tests\Support\NeedsTestDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * La coquille du lot 1 : l'accueil et chaque entree de menu repondent, et le
- * catalogue de modules est bien la source unique des deux.
+ * La coquille de l'application : l'accueil et chaque entree de menu repondent,
+ * et le catalogue de modules est bien la source unique des deux.
  *
- * Aucune base n'est requise : ces routes ne touchent pas Doctrine.
+ * Depuis la couche de securite, ces pages sont PROTEGEES : chaque test
+ * authentifie son navigateur, ce qui demande une base de test (voir
+ * NeedsTestDatabase — les tests sont sautes, pas en echec, sans base). La
+ * protection elle-meme est verifiee par SecurityTest, qui n'a besoin de rien.
  */
 final class NavigationTest extends WebTestCase
 {
+    use NeedsTestDatabase;
+
     public function testHomepageRendersOneTilePerModule(): void
     {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/');
+        $browser = $this->signedInBrowser();
+        $crawler = $browser->request('GET', '/');
 
         self::assertResponseIsSuccessful();
         self::assertSelectorExists('h1');
@@ -31,8 +38,8 @@ final class NavigationTest extends WebTestCase
 
     public function testPageShellIsPresent(): void
     {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/');
+        $browser = $this->signedInBrowser();
+        $crawler = $browser->request('GET', '/');
 
         self::assertResponseIsSuccessful();
         // La charpente que tout module heritera : menu, en-tete, pile de toasts.
@@ -43,11 +50,22 @@ final class NavigationTest extends WebTestCase
         self::assertSame('', trim($crawler->filter('#socle-toasts')->html()));
     }
 
+    public function testHeaderShowsTheAuthenticatedIdentity(): void
+    {
+        $browser = $this->signedInBrowser();
+        $browser->request('GET', '/');
+
+        self::assertResponseIsSuccessful();
+        // Le bloc identite factice du lot 1 a laisse place a l'utilisateur reel.
+        self::assertSelectorTextContains('.socle-identity__name', 'Camille Durand');
+        self::assertSelectorTextContains('.socle-identity__role', 'Societe Cliente SAS');
+    }
+
     #[DataProvider('moduleProvider')]
     public function testEveryModuleEntryRenders(string $code, string $label): void
     {
-        $client = static::createClient();
-        $client->request('GET', '/modules/'.$code);
+        $browser = $this->signedInBrowser();
+        $browser->request('GET', '/modules/'.$code);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', $label);
@@ -55,8 +73,8 @@ final class NavigationTest extends WebTestCase
 
     public function testUnknownModuleReturns404(): void
     {
-        $client = static::createClient();
-        $client->request('GET', '/modules/module-qui-nexiste-pas');
+        $browser = $this->signedInBrowser();
+        $browser->request('GET', '/modules/module-qui-nexiste-pas');
 
         self::assertResponseStatusCodeSame(404);
     }
@@ -69,5 +87,13 @@ final class NavigationTest extends WebTestCase
         foreach ((new ModuleRegistry())->all() as $module) {
             yield $module->code => [$module->code, $module->label];
         }
+    }
+
+    private function signedInBrowser(): KernelBrowser
+    {
+        $browser = static::createClient();
+        $browser->loginUser($this->createUser($this->resetSchema()));
+
+        return $browser;
     }
 }

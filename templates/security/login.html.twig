@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{#
+    Formulaire de connexion — SEUL ecran public de l'application, avec l'accuse
+    d'envoi. Il surcharge `page` : ni menu ni en-tete, qui supposent un
+    utilisateur authentifie.
+
+    Variables : error (exception d'authentification posee par le pare-feu quand
+    un lien est refuse), message (erreur de saisie), email (adresse a reafficher).
+#}
+
+{% block title %}Connexion — Extranet MILLIRIS{% endblock %}
+
+{% block page %}
+    <main class="socle-auth" id="socle-content">
+        <div class="socle-auth__card card">
+            <div class="card-body p-4 p-sm-5">
+                <div class="socle-auth__brand">
+                    <span class="socle-brand__plate">
+                        <span class="socle-brand__logo" role="img" aria-label="MILLIRIS"></span>
+                    </span>
+                </div>
+
+                <h1 class="h4 text-center mb-1">Extranet client</h1>
+                <p class="text-center text-body-secondary mb-4">
+                    Indiquez votre adresse de courriel : vous recevrez un lien de connexion.
+                </p>
+
+                {% if error %}
+                    {#
+                        Le detail de l'exception n'est volontairement PAS affiche :
+                        il distinguerait « lien expire » de « compte inconnu », ce
+                        qui renseignerait un visiteur sur l'existence d'un compte.
+                    #}
+                    <div class="alert alert-warning" role="alert">
+                        Ce lien de connexion n'est plus valable. Les liens expirent au bout de
+                        5 minutes : demandez-en un nouveau ci-dessous.
+                    </div>
+                {% endif %}
+
+                {% if message %}
+                    <div class="alert alert-warning" role="alert">{{ message }}</div>
+                {% endif %}
+
+                <form method="post" action="{{ path('app_login_request') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('app_login') }}">
+
+                    <label class="form-label" for="email">Adresse de courriel</label>
+                    <input type="email"
+                           class="form-control form-control-lg"
+                           id="email"
+                           name="email"
+                           value="{{ email }}"
+                           autocomplete="email"
+                           inputmode="email"
+                           required
+                           autofocus>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+                        <i class="bi bi-envelope-paper me-1" aria-hidden="true"></i>Recevoir mon lien de connexion
+                    </button>
+                </form>
+
+                <p class="small text-body-secondary mt-4 mb-0">
+                    Il n'y a pas de mot de passe sur cet extranet. Le lien recu est valable
+                    <strong>5 minutes</strong> et vous connecte en un clic. Si vous n'avez pas de
+                    compte, demandez-le a votre contact MILLIRIS.
+                </p>
+            </div>
+        </div>
+    </main>
+{% endblock %}

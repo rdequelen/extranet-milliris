@@ -1,0 +1,20 @@
+# https://symfony.com/doc/current/mailer.html
+#
+# Le courriel n'est pas un agrement ici : c'est le SEUL moyen d'entrer dans
+# l'application. Un MAILER_DSN mal regle ne casse aucune page, il rend juste la
+# connexion impossible — panne silencieuse, a verifier en premier si « je ne
+# recois pas mon lien ».
+#
+# Le defaut de .env est `null://null` (aucun envoi) : il faut poser un vrai DSN
+# dans .env.local sur chaque machine. En dev, le lien est aussi ecrit dans le
+# journal par App\Security\LoginLinkSender, ce qui permet de se connecter sans
+# serveur SMTP.
+framework:
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+
+when@test:
+    framework:
+        mailer:
+            # La suite de tests n'envoie jamais rien, quel que soit .env.local.
+            dsn: 'null://null'

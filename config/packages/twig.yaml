@@ -7,9 +7,8 @@ twig:
         # App\Navigation\ModuleRegistry et nulle part ailleurs.
         modules: '@App\Navigation\ModuleRegistry'
 
-        # Identite factice de l'en-tete (voir config/services.yaml).
-        client_name: '%app.client_name%'
-        client_role: '%app.client_role%'
+        # L'identite de l'en-tete n'est PAS une globale : le gabarit lit
+        # `app.user` (App\Entity\User), pose par le pare-feu de securite.
 
 when@test:
     twig:

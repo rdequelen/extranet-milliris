@@ -1,0 +1,88 @@
+# https://symfony.com/doc/current/security.html
+#
+# L'application est FERMEE PAR DEFAUT : la derniere regle de `access_control`
+# couvre `^/` et exige ROLE_CLIENT. Toute route ajoutee plus tard est donc
+# protegee sans qu'on y pense ; c'est l'oubli inverse (ouvrir explicitement une
+# route publique) qui se voit en relecture.
+#
+# UNE SEULE methode d'authentification : le lien de connexion par courriel
+# (`login_link`). Il n'y a NI mot de passe, NI hacheur declare — une fiche user
+# ne porte aucun secret, et il n'y a donc rien a voler dans la base.
+#
+# Ce fichier n'a PAS de bloc `when@test` : la suite de tests tourne avec le
+# pare-feu actif, comme la production. Un test fonctionnel qui demande une page
+# protegee sans authentifier son client recoit une redirection 302, et c'est le
+# comportement a verifier.
+security:
+    providers:
+        # Fournisseur maison (et non le fournisseur Doctrine standard) parce
+        # qu'il ne rend QUE les comptes actifs : `is_active = false` fait
+        # echouer la resolution de l'utilisateur, aussi bien a la connexion
+        # qu'au rafraichissement de la session a chaque requete. Desactiver un
+        # compte deconnecte donc immediatement ses sessions ouvertes.
+        # Voir App\Security\UserProvider.
+        app_users:
+            id: App\Security\UserProvider
+
+    role_hierarchy:
+        # Un administrateur est aussi un client : il voit tout ce que voit un
+        # client, sans qu'on ait a lui poser les deux roles en base.
+        ROLE_ADMIN: [ROLE_CLIENT]
+
+    firewalls:
+        # Barre de debogage, profileur et serveur de developpement de Vite
+        # (prefixe /build en dev, voir config/routes/pentatrion_vite.yaml) :
+        # hors du pare-feu, sinon la page de connexion s'affiche nue.
+        dev:
+            pattern: ^/(_(profiler|wdt)|build|css|images|js)/
+            security: false
+
+        main:
+            lazy: true
+            provider: app_users
+
+            # Un visiteur anonyme qui demande une page protegee est REDIRIGE
+            # vers le formulaire de connexion (et non renvoye en 401). Le
+            # chemin demande est memorise par le noyau avant l'appel, et
+            # `default_target_path` ne sert donc que s'il n'y en a pas.
+            entry_point: App\Security\LoginFormEntryPoint
+
+            login_link:
+                check_route: app_login_check
+                # Le jeton est une signature (APP_SECRET), pas une ligne en
+                # base : rien a stocker, rien a purger.
+                signature_properties: ['email']
+                # 5 minutes, exigence du ticket.
+                lifetime: 300
+                # `max_uses` est volontairement NON pose : les antivirus et les
+                # previsualiseurs de certains clients de messagerie ouvrent les
+                # liens d'un courriel avant l'humain. Avec un lien a usage
+                # unique, c'est le robot qui consomme le jeton et l'utilisateur
+                # qui recoit « lien invalide ». La fenetre de 5 minutes porte
+                # donc seule la limitation.
+                default_target_path: app_home
+                # Lien expire ou falsifie : retour au formulaire, qui affiche
+                # l'erreur (sinon le defaut du composant renvoie vers /login,
+                # qui n'existe pas ici).
+                failure_path: app_login
+                login_path: app_login
+
+            logout:
+                path: app_logout
+                target: app_login
+                # Le lien de deconnexion porte un jeton CSRF (genere par
+                # `logout_path()` dans Twig) : un <img> distant ne peut pas
+                # deconnecter l'utilisateur.
+                enable_csrf: true
+
+    access_control:
+        # Les assets construits sont servis par le serveur web ; s'ils passent
+        # malgre tout par PHP, les proteger afficherait la page de connexion
+        # sans style.
+        - { path: ^/(build|bundles)/, roles: PUBLIC_ACCESS }
+        # Le tunnel de connexion lui-meme. `^/connexion` couvre le formulaire,
+        # l'envoi, l'accuse d'envoi et la verification du lien.
+        - { path: ^/connexion, roles: PUBLIC_ACCESS }
+        - { path: ^/deconnexion, roles: PUBLIC_ACCESS }
+        # Tout le reste : compte connecte obligatoire.
+        - { path: ^/, roles: ROLE_CLIENT }

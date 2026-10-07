@@ -3,7 +3,26 @@ framework:
     secret: '%env(APP_SECRET)%'
 
     # La session n'est demarree que si on y lit ou ecrit.
-    session: true
+    #
+    # ⚠️ DUREE DE VIE VOLONTAIREMENT TRES LONGUE (un an). L'exigence du ticket
+    # « securite » est : une fois identifie, l'utilisateur reste connecte « sans
+    # date limite ». C'est la session elle-meme qui porte cette duree — on n'a
+    # donc PAS branche `remember_me`, qui ferait un second mecanisme (et un
+    # second cookie signe) pour le meme besoin. Consequence a connaitre : le
+    # cookie survit a la fermeture du navigateur, et les fichiers de session ne
+    # sont plus ramasses par le nettoyage de PHP avant un an.
+    session:
+        cookie_lifetime: 31536000
+        gc_maxlifetime: 31536000
+        cookie_httponly: true
+        cookie_samesite: lax
+        # `auto` = cookie marque `secure` des que la requete est en https. Une
+        # valeur en dur casserait l'un des deux environnements.
+        cookie_secure: auto
+
+    # Necessaire aux jetons CSRF du formulaire de connexion et du lien de
+    # deconnexion (fonction Twig `csrf_token()` / `logout_path()`).
+    csrf_protection: true
 
     # Necessaire a la fonction Twig asset() (favicon, fichiers de public/).
     assets: null
