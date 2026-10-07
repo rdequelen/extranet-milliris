@@ -123,13 +123,19 @@
 
 .socle-brand {
     display: block;
-    flex: 1 1 auto;
     min-width: 0;
     padding: 1rem 1rem 0.5rem;
     text-decoration: none;
 }
 
+// Dans l'<aside> desktop (conteneur flex en COLONNE), `.socle-brand` est le
+// premier des deux enfants, avec `.socle-nav` pour second. Un `flex-grow`
+// sur la marque l'etirerait sur tout l'espace vertical disponible et
+// repousserait le menu vers le bas du cadre au lieu de le laisser coller en
+// haut. Ce grandissement n'a de sens que dans l'offcanvas-header (ligne,
+// marque + bouton de fermeture) : on le limite a ce contexte.
 .socle-sidebar .offcanvas-header .socle-brand {
+    flex: 1 1 auto;
     padding: 0;
 }
 
