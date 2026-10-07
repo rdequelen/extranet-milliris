@@ -1,0 +1,1 @@
+# git ne versionne pas un repertoire vide : sans ce fichier, docs/ n'arriverait jamais.

@@ -1,0 +1,43 @@
+# Contrat de pile de cette application, lu par le Dev Center.
+#
+# CE FICHIER GAGNE sur ce qui est saisi dans l'interface du Dev Center : c'est la seule
+# facon qu'un ticket qui monte une version de pile soit testable par sa propre branche.
+# Une valeur vide veut dire « ce verbe n'existe pas pour cette application » — ce n'est
+# pas un oubli, c'est ce qui decide de la forme de recette proposee a l'ecran.
+
+application: extranet-milliris
+libelle: "Extranet client"
+profil: web-symfony-postgres
+branche_par_defaut: main
+
+commandes:
+  install: "composer install --no-interaction"
+  build: "npm ci && npm run build"
+  lint: "php bin/console lint:twig templates/"
+  test: "vendor/bin/phpunit"
+  migrate: "php bin/console doctrine:migrations:migrate --no-interaction"
+  seed: ""
+  serve: "php -S 0.0.0.0:8000 -t public"
+  health: "php bin/console about"
+
+# Pile de conteneur de cette application. TOUT CE BLOC EST FACULTATIF.
+#
+# Tel quel (tout en commentaire), le Dev Center fournit une pile PAR DEFAUT construite pour
+# jouer le contrat ci-dessus : PHP 8.4, composer, git, unzip, les extensions
+# `zip`/`intl` (+ `pdo_pgsql` s'il y a une base), et node/npm si une commande les appelle.
+#
+# ⚠️ Cette pile est celle du Dev Center, PAS la tienne : elle n'est reproductible que par lui.
+#    Des que ce depot a une pile a lui, declare-la — un `dockerfile:` versionne ICI est la
+#    forme a privilegier, parce que la recette devient alors reproductible chez toi a
+#    l'identique. Des qu'une des deux cles ci-dessous est declaree, la pile par defaut
+#    disparait et RIEN n'est ajoute a ton image : c'est a elle de porter ce que le contrat
+#    appelle (le Dev Center le verifie avant de monter, et refuse en nommant ce qui manque).
+#
+# conteneur:
+#   dockerfile: "docker/Dockerfile"   # construite depuis CE depot — la forme a privilegier
+#   image: "mon-registre/ma-pile:1"   # ou une image deja publiee (`dockerfile` gagne)
+#   port_interne: 8000                # ce que la commande `serve` ecoute DANS le conteneur
+#   base: false                       # cette application n'a pas de base de donnees
+#   base:
+#     image: "postgres:18"            # ou une autre version
+

@@ -1,0 +1,12 @@
+# Pose par le Dev Center a l'initialisation du depot. A completer librement.
+.DS_Store
+*.log
+.env.local
+.env.*.local
+
+/vendor/
+/node_modules/
+/var/
+/public/build/
+/public/bundles/
+
