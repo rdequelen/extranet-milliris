@@ -1,0 +1,10 @@
+# Point d'entree des routes de l'application.
+# Les methodes portant l'attribut #[Route] sont importees automatiquement.
+#
+# Pour lister les routes enregistrees : php bin/console debug:router
+
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute

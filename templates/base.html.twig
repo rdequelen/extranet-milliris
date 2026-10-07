@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Extranet MILLIRIS{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2212%22 fill=%22%231B3B5A%22/><text x=%2232%22 y=%2244%22 text-anchor=%22middle%22 font-family=%22system-ui,sans-serif%22 font-size=%2236%22 font-weight=%22700%22 fill=%22%2335A8E0%22>M</text></svg>">
+
+        {#
+            Le theme est pose sur <html> AVANT le premier rendu, sinon la page
+            clignote en clair avant que Stimulus n'ait demarre. Ce script est
+            volontairement en ligne et minuscule ; la bascule elle-meme vit
+            dans assets/controllers/theme_controller.js.
+            Ordre : choix memorise > preference systeme > clair.
+        #}
+        <script>
+            (function () {
+                var theme = 'light';
+                try {
+                    var stored = window.localStorage.getItem('milliris.theme');
+                    if (stored === 'light' || stored === 'dark') {
+                        theme = stored;
+                    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        theme = 'dark';
+                    }
+                } catch (e) {}
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            })();
+        </script>
+
+        {% block stylesheets %}
+            {{ vite_entry_link_tags('app') }}
+        {% endblock %}
+
+        {% block javascripts %}
+            {{ vite_entry_script_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        <a class="visually-hidden-focusable btn btn-primary m-2" href="#socle-content">Aller au contenu</a>
+
+        <div class="socle-shell">
+            {% include '_partials/sidebar.html.twig' %}
+
+            <div class="socle-main">
+                {#
+                    Les actions de page sont capturees dans une variable pour
+                    pouvoir etre passees a l'include de l'en-tete : un bloc
+                    declare ici reste surchargeable par les gabarits enfants.
+                #}
+                {% set page_actions %}{% block page_actions %}{% endblock %}{% endset %}
+
+                {% include '_partials/topbar.html.twig' with {
+                    breadcrumb: breadcrumb|default([]),
+                    page_actions: page_actions,
+                } only %}
+
+                <main class="socle-content" id="socle-content" tabindex="-1">
+                    {% block body %}{% endblock %}
+                </main>
+            </div>
+        </div>
+
+        {% include '_partials/toasts.html.twig' %}
+    </body>
+</html>

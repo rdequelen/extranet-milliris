@@ -1,0 +1,78 @@
+{#
+    Barre laterale navy.
+
+    Le MEME contenu sert deux conteneurs : un <aside> fixe a partir de lg, et un
+    offcanvas Bootstrap en dessous. Seul le conteneur est double ; la marque et
+    la navigation sont ecrites une fois, dans les macros ci-dessous.
+#}
+{% import _self as sidebar %}
+
+{% set current_route = app.request.attributes.get('_route') %}
+{% set current_code = app.request.attributes.get('_route_params')['code']|default(null) %}
+
+<aside class="socle-sidebar d-none d-lg-flex" aria-label="Navigation principale">
+    {{ sidebar.brand() }}
+    {{ sidebar.nav(modules, current_route, current_code) }}
+</aside>
+
+<div class="socle-sidebar offcanvas offcanvas-start d-lg-none"
+     tabindex="-1"
+     id="socleSidebar"
+     aria-label="Navigation principale">
+    <div class="offcanvas-header">
+        {{ sidebar.brand() }}
+        <button type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="offcanvas"
+                aria-label="Fermer le menu"></button>
+    </div>
+    <div class="offcanvas-body">
+        {{ sidebar.nav(modules, current_route, current_code) }}
+    </div>
+</div>
+
+{% macro brand() %}
+    <a class="socle-brand" href="{{ path('app_home') }}">
+        <span class="socle-brand__plate">
+            {# Le logo est pose en background-image (voir _socle.scss) : c'est
+               Vite qui en reecrit l'URL au build. #}
+            <span class="socle-brand__logo" role="img" aria-label="MILLIRIS"></span>
+        </span>
+        <span class="socle-brand__wordmark">Extranet client</span>
+    </a>
+{% endmacro %}
+
+{% macro nav(modules, current_route, current_code) %}
+    <nav class="socle-nav" aria-label="Modules">
+        <ul class="list-unstyled mb-0">
+            <li>
+                <a class="socle-nav__link{{ current_route == 'app_home' ? ' is-active' }}"
+                   href="{{ path('app_home') }}"
+                   {% if current_route == 'app_home' %}aria-current="page"{% endif %}>
+                    <i class="bi bi-grid-1x2 socle-nav__icon" aria-hidden="true"></i>
+                    <span class="socle-nav__label">Tableau de bord</span>
+                </a>
+            </li>
+        </ul>
+
+        {% for family in modules.families %}
+            <p class="socle-nav__family">{{ family.label }}</p>
+            <ul class="list-unstyled mb-0">
+                {% for module in modules.byFamily(family) %}
+                    <li class="socle-family--{{ family.value }}">
+                        <a class="socle-nav__link{{ current_code == module.code ? ' is-active' }}"
+                           href="{{ path(module.route, module.routeParameters) }}"
+                           {% if current_code == module.code %}aria-current="page"{% endif %}>
+                            <span class="socle-nav__dot" aria-hidden="true"></span>
+                            <i class="bi {{ module.icon }} socle-nav__icon" aria-hidden="true"></i>
+                            <span class="socle-nav__label">{{ module.label }}</span>
+                            {% if not module.available %}
+                                <span class="socle-nav__badge">{{ module.status.label }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </nav>
+{% endmacro %}

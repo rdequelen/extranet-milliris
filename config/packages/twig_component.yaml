@@ -1,0 +1,6 @@
+twig_component:
+    anonymous_template_directory: 'components/'
+    defaults:
+        # Namespace et repertoire des composants Twig du socle.
+        # Les briques DataTable (lot 2) et DetailPanel (lot 3) viendront ici.
+        App\Twig\Components\: 'components/'

@@ -1,0 +1,32 @@
+// =============================================================================
+// CHARTE MILLIRIS — LE seul fichier a toucher si la charte bouge.
+// =============================================================================
+//
+// Six valeurs relevees sur le logo « MILLIRIS 3 branches » fourni par
+// l'operateur. Si la charte officielle donne mieux, on corrige ces six lignes
+// et rien d'autre : tout le reste du socle passe par ces variables ou par la
+// propriete CSS --socle-family qu'elles alimentent.
+
+// Chrome de l'application : barre laterale, en-tete.
+$milliris-navy: #1b3b5a;
+$milliris-navy-dark: #132b42;
+
+// Accent interactif : liens et boutons.
+// Attention : sur fond blanc le cyan ne passe pas le contraste AA pour du
+// texte. Il sert donc d'accent en theme sombre et de couleur de survol en
+// theme clair — jamais de couleur de texte sur blanc. Voir app.scss.
+$milliris-cyan: #35a8e0;
+
+// Les trois branches de la baseline : elles CODENT les familles de modules.
+$milliris-branche-jaune: #f5a81b; // Elec - Autom
+$milliris-branche-rouge: #e8192b; // Mecanisation
+$milliris-branche-orange: #f07e1c; // Maintenance
+
+// Carte famille -> couleur. Les cles DOIVENT rester alignees sur les valeurs de
+// l'enum PHP App\Navigation\ModuleFamily : c'est ce qui relie un module a sa
+// classe `.socle-family--<cle>`.
+$milliris-familles: (
+    'maintenance': $milliris-branche-orange,
+    'elec-autom': $milliris-branche-jaune,
+    'mecanisation': $milliris-branche-rouge,
+);

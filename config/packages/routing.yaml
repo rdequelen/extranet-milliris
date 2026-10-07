@@ -1,0 +1,9 @@
+framework:
+    router:
+        # URL utilisee pour generer des liens hors contexte HTTP (commandes console).
+        default_uri: '%env(DEFAULT_URI)%'
+
+when@prod:
+    framework:
+        router:
+            strict_requirements: null

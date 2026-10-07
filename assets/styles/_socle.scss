@@ -1,0 +1,538 @@
+// =============================================================================
+// Styles propres au socle. Importe APRES Bootstrap (voir app.scss) : on peut
+// donc utiliser ses fonctions, ses mixins de points de rupture et ses
+// proprietes personnalisees.
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Jetons de surface et couleur de famille
+// -----------------------------------------------------------------------------
+//
+// --socle-family-color est LE point d'entree de la couleur de branche : une
+// seule classe la pose sur un element, tout le reste (filet, pastille, en-tete
+// de tuile, icone) la lit. Valeur de repli : le cyan de la charte, pour les
+// elements qui n'appartiennent a aucune famille.
+
+:root {
+    --socle-family-color: #{$milliris-cyan};
+    --socle-surface: #fff;
+    --socle-surface-muted: #{$body-bg};
+    --socle-navy: #{$milliris-navy};
+    --socle-navy-dark: #{$milliris-navy-dark};
+}
+
+[data-bs-theme='dark'] {
+    --socle-surface: #{$body-secondary-bg-dark};
+    --socle-surface-muted: #{$body-tertiary-bg-dark};
+}
+
+// Les classes de famille, generees depuis la carte de _brand.scss. Les cles
+// sont les valeurs de l'enum PHP App\Navigation\ModuleFamily.
+@each $name, $color in $milliris-familles {
+    .socle-family--#{$name} {
+        --socle-family-color: #{$color};
+    }
+}
+
+.card {
+    --bs-card-bg: var(--socle-surface);
+}
+
+// En theme sombre le navy devient illisible comme couleur d'action : les
+// boutons primaires passent au cyan, qui est l'autre moitie de la charte.
+[data-bs-theme='dark'] .btn-primary {
+    --bs-btn-bg: #{$milliris-cyan};
+    --bs-btn-border-color: #{$milliris-cyan};
+    --bs-btn-color: #{$milliris-navy-dark};
+    --bs-btn-hover-bg: #{tint-color($milliris-cyan, 15%)};
+    --bs-btn-hover-border-color: #{tint-color($milliris-cyan, 15%)};
+    --bs-btn-hover-color: #{$milliris-navy-dark};
+    --bs-btn-active-bg: #{shade-color($milliris-cyan, 12%)};
+    --bs-btn-active-border-color: #{shade-color($milliris-cyan, 12%)};
+    --bs-btn-active-color: #{$milliris-navy-dark};
+    --bs-btn-disabled-bg: #{$milliris-cyan};
+    --bs-btn-disabled-border-color: #{$milliris-cyan};
+    --bs-btn-disabled-color: #{$milliris-navy-dark};
+}
+
+// -----------------------------------------------------------------------------
+// Charpente de page
+// -----------------------------------------------------------------------------
+
+.socle-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.socle-main {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    // Sans cela, un tableau large fait deborder la colonne au lieu de defiler.
+    min-width: 0;
+}
+
+.socle-content {
+    flex: 1 1 auto;
+    padding: 1.25rem 1rem 3rem;
+
+    @include media-breakpoint-up(lg) {
+        padding: 1.75rem 2rem 4rem;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Barre laterale
+// -----------------------------------------------------------------------------
+//
+// Le meme habillage sert deux conteneurs : un <aside> fixe a partir de lg, et
+// un offcanvas Bootstrap en dessous. On duplique volontairement le conteneur
+// plutot que d'utiliser `.offcanvas-lg` : ce dernier force
+// `background-color: transparent !important` au-dela du point de rupture, et
+// le recuperer demanderait de surencherir en `!important`. Le contenu, lui,
+// n'est ecrit qu'une fois (macro `nav()` de _partials/sidebar.html.twig).
+
+.socle-sidebar {
+    --socle-sidebar-width: 280px;
+    --bs-offcanvas-width: var(--socle-sidebar-width);
+    --bs-offcanvas-bg: transparent;
+    --bs-offcanvas-color: rgba(255, 255, 255, 0.82);
+    --bs-offcanvas-border-width: 0;
+
+    background: linear-gradient(180deg, var(--socle-navy) 0%, var(--socle-navy-dark) 100%);
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.socle-sidebar:not(.offcanvas) {
+    position: sticky;
+    top: 0;
+    flex: 0 0 var(--socle-sidebar-width);
+    flex-direction: column;
+    width: var(--socle-sidebar-width);
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.socle-sidebar .offcanvas-header {
+    padding-bottom: 0;
+}
+
+.socle-sidebar .offcanvas-body {
+    padding: 0;
+}
+
+.socle-brand {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 1rem 1rem 0.5rem;
+    text-decoration: none;
+}
+
+.socle-sidebar .offcanvas-header .socle-brand {
+    padding: 0;
+}
+
+.socle-brand__plate {
+    display: block;
+    padding: 0.5rem 0.625rem;
+    background: #fff;
+    border-radius: $border-radius;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.socle-brand__logo {
+    display: block;
+    width: 100%;
+    // Le logo passe par le CSS et non par une balise <img> : c'est la seule
+    // facon fiable de faire reecrire son URL par Vite (pentatrion/vite-bundle
+    // n'expose que vite_entry_script_tags / vite_entry_link_tags, pas de
+    // fonction Twig pour un fichier isole d'assets/).
+    //
+    // Le fichier fourni par l'operateur est un export 16/9 : le mot-symbole
+    // n'occupe que la bande centrale, le reste est du blanc de mise en page.
+    // On recadre a l'affichage plutot que de retoucher l'original, qui reste
+    // ainsi la piece de reference. Le decalage vertical (47.8 %) centre la
+    // bande utile, du point du « i » au bas des trois pastilles.
+    aspect-ratio: 3.4;
+    background-image: url('../images/milliris-logo.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center 47.8%;
+}
+
+.socle-brand__wordmark {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 0.5rem 0.125rem 0;
+}
+
+// -----------------------------------------------------------------------------
+// Navigation de la barre laterale
+// -----------------------------------------------------------------------------
+
+.socle-nav {
+    padding: 0.5rem 0.75rem 1.5rem;
+}
+
+.socle-nav__family {
+    margin: 1.25rem 0.75rem 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.socle-nav__link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.75rem 0.5rem 1rem;
+    border-radius: $border-radius;
+    color: rgba(255, 255, 255, 0.82);
+    text-decoration: none;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+
+    // Le filet lateral : c'est lui qui porte la couleur de famille.
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0.375rem auto 0.375rem 0;
+        width: 3px;
+        border-radius: 3px;
+        background: var(--socle-family-color);
+        opacity: 0;
+        transition: opacity 0.15s ease;
+    }
+
+    &:hover,
+    &:focus-visible {
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        text-decoration: none;
+
+        &::before {
+            opacity: 0.65;
+        }
+    }
+
+    &.is-active {
+        background: rgba(255, 255, 255, 0.14);
+        color: #fff;
+        font-weight: 600;
+
+        &::before {
+            opacity: 1;
+        }
+    }
+}
+
+.socle-nav__dot {
+    flex: 0 0 auto;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--socle-family-color);
+}
+
+.socle-nav__icon {
+    flex: 0 0 auto;
+    font-size: 1rem;
+    opacity: 0.85;
+}
+
+.socle-nav__label {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.socle-nav__badge {
+    flex: 0 0 auto;
+    padding: 0.125rem 0.4rem;
+    border-radius: 1rem;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+// -----------------------------------------------------------------------------
+// En-tete
+// -----------------------------------------------------------------------------
+
+.socle-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 60px;
+    padding: 0.5rem 1rem;
+    background: var(--socle-surface);
+    border-bottom: 1px solid var(--bs-border-color);
+}
+
+.socle-topbar__trail {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.socle-topbar__trail .breadcrumb {
+    --bs-breadcrumb-margin-bottom: 0;
+    --bs-breadcrumb-font-size: 0.875rem;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+.socle-topbar__trail .breadcrumb-item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.socle-topbar__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.socle-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--bs-border-color);
+    border-radius: $border-radius;
+    background: var(--socle-surface);
+    color: var(--bs-body-color);
+    line-height: 1;
+
+    &:hover {
+        background: var(--socle-surface-muted);
+        color: var(--bs-body-color);
+    }
+}
+
+.socle-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: $border-radius;
+    background: var(--socle-surface);
+    color: var(--bs-body-color);
+
+    &:hover {
+        background: var(--socle-surface-muted);
+        color: var(--bs-body-color);
+    }
+}
+
+.socle-identity__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--socle-navy);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.socle-identity__text {
+    text-align: start;
+    line-height: 1.15;
+}
+
+.socle-identity__name {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.socle-identity__role {
+    display: block;
+    font-size: 0.6875rem;
+    color: var(--bs-secondary-color);
+}
+
+// -----------------------------------------------------------------------------
+// En-tete de page
+// -----------------------------------------------------------------------------
+
+.socle-page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.socle-page-head__text {
+    flex: 1 1 18rem;
+    min-width: 0;
+}
+
+.socle-page-head__title {
+    margin-bottom: 0.25rem;
+}
+
+.socle-page-head__lead {
+    margin-bottom: 0;
+    color: var(--bs-secondary-color);
+}
+
+// -----------------------------------------------------------------------------
+// Tuiles de modules (accueil)
+// -----------------------------------------------------------------------------
+
+.module-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+    padding: 1.375rem 1.25rem 1.25rem;
+    overflow: hidden;
+    background: var(--socle-surface);
+    border: 1px solid var(--bs-border-color);
+    border-radius: $border-radius-lg;
+    color: inherit;
+    text-decoration: none;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease;
+
+    // L'en-tete coloree de la tuile : un filet, pas un aplat.
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 4px;
+        background: var(--socle-family-color);
+    }
+
+    &:hover,
+    &:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1.25rem rgba(11, 26, 38, 0.14);
+        border-color: var(--socle-family-color);
+        color: inherit;
+        text-decoration: none;
+    }
+}
+
+.module-tile__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.module-tile__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    font-size: 1.25rem;
+    background: color-mix(in srgb, var(--socle-family-color) 15%, transparent);
+    // Le jaune et l'orange de la charte sont trop clairs tels quels sur un
+    // fond pale : on les assombrit pour le glyphe en theme clair.
+    color: color-mix(in srgb, var(--socle-family-color) 75%, #000);
+}
+
+[data-bs-theme='dark'] .module-tile__icon {
+    color: var(--socle-family-color);
+}
+
+.module-tile__status {
+    padding: 0.2rem 0.55rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 1rem;
+    background: var(--socle-surface-muted);
+    color: var(--bs-secondary-color);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.module-tile__title {
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+}
+
+.module-tile__text {
+    flex: 1 1 auto;
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--bs-secondary-color);
+}
+
+.module-tile__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--bs-link-color);
+}
+
+// -----------------------------------------------------------------------------
+// Page « a venir » partagee
+// -----------------------------------------------------------------------------
+
+.socle-placeholder {
+    max-width: 44rem;
+    padding: 2rem 1.5rem;
+    border: 1px solid var(--bs-border-color);
+    border-left: 4px solid var(--socle-family-color);
+    border-radius: $border-radius-lg;
+    background: var(--socle-surface);
+}
+
+.socle-placeholder__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    border-radius: 0.875rem;
+    font-size: 1.5rem;
+    background: color-mix(in srgb, var(--socle-family-color) 15%, transparent);
+    color: color-mix(in srgb, var(--socle-family-color) 75%, #000);
+}
+
+[data-bs-theme='dark'] .socle-placeholder__icon {
+    color: var(--socle-family-color);
+}
+
+// -----------------------------------------------------------------------------
+// Pile de toasts (alimentee au lot 3 par Turbo Stream)
+// -----------------------------------------------------------------------------
+
+.socle-toasts {
+    z-index: 1090;
+}

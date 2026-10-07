@@ -1,0 +1,26 @@
+# Point d'entree de la configuration des services de l'application.
+# Les dependances se configurent dans packages/.
+
+parameters:
+    # Bloc identite factice de l'en-tete. Le ticket « securite » remplacera cette
+    # valeur par le client reellement authentifie, sans toucher au gabarit.
+    app.client_name: 'Societe Cliente SAS'
+    app.client_role: 'Compte de demonstration'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/Kernel.php'
+            # Les entites Doctrine arrivent au lot 2 ; elles ne sont pas des services.
+            - '../src/Entity/'
+            # Objets de valeur et enums du catalogue de modules : ils se
+            # construisent avec des scalaires, l'autoconfiguration n'a rien a
+            # en faire. Seul ModuleRegistry est un vrai service.
+            - '../src/Navigation/Module.php'
+            - '../src/Navigation/ModuleFamily.php'
+            - '../src/Navigation/ModuleStatus.php'

@@ -1,0 +1,14 @@
+pentatrion_vite:
+    # Laisse a false volontairement : si public/build/.vite/manifest.json n'a pas
+    # encore ete produit (assets non construits), les balises sont simplement
+    # omises au lieu de faire exploser le rendu. C'est ce qui permet a
+    # `lint:twig` et aux tests fonctionnels de tourner sans `npm run build`.
+    throw_on_missing_entry: false
+
+    # Turbo Drive conserve le <head> d'une navigation a l'autre : ces attributs
+    # lui disent de forcer un rechargement complet quand le hash d'un asset
+    # change, donc apres un deploiement.
+    script_attributes:
+        'data-turbo-track': 'reload'
+    link_attributes:
+        'data-turbo-track': 'reload'
