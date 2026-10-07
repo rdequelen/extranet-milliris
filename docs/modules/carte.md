@@ -5,7 +5,7 @@
 > tickets livres. Rien n'y est devine, et rien n'y est exhaustif : ce sont des POINTS
 > D'ENTREE pour ne pas fouiller le depot. Si ton travail t'emmene ailleurs, vas-y.
 >
-> **Fraicheur** — derivee de `c8bb1ff58080` le 2026-10-07 18:14, 0 commit(s) de retard. Avant de t'y fier : `git rev-parse HEAD` — si le
+> **Fraicheur** — derivee de `f02cb1503b17` le 2026-10-07 20:07, 0 commit(s) de retard. Avant de t'y fier : `git rev-parse HEAD` — si le
 > SHA differe de celui-ci, cette carte est un INDEX POSSIBLEMENT PERIME : les chemins qu'elle
 > nomme restent de bons points de depart, ses compteurs ne sont plus des mesures.
 >
@@ -14,7 +14,7 @@
 > chemin, ou ce qui bouge avec lui : `Grep` ce chemin dans ce fichier. Chaque ligne porte sa
 > PROVENANCE entre parentheses (manifeste / routeur / git / ticket) — ce qui est derive est
 > verifiable. Les seules lignes REDIGEES sont celles du volet **Roles ecrits** d'un module :
-> 7 ligne(s) sur 1 module(s), ecrite(s) par l'agent de finalisation d'un ticket qui venait de
+> 9 ligne(s) sur 1 module(s), ecrite(s) par l'agent de finalisation d'un ticket qui venait de
 > toucher le fichier cite (source append-only : `docs/modules/semantique/`). Elles disent un CONSTAT, pas une derivation.
 >
 > **Poids** — plafond `carte_max_bytes` = 150 Ko. La carte n'est JAMAIS decoupee (le decoupage
@@ -30,12 +30,14 @@ complete serait pire que pas de carte du tout.
 
 ## Sommaire adresse — 1 module(s)
 
-- `socle` — l. 35, 27 lignes, 2 Ko — Socle
+- `socle` — l. 35, 43 lignes, 3 Ko — Socle
 
 ## socle — Socle
 
 - **Place** (manifeste) : racine de l'arborescence.
-- **Roles ecrits** (ecrit par la finalisation — constate sur un ticket, pas derive ; source `docs/modules/semantique/socle.md`, 7) :
+- **Roles ecrits** (ecrit par la finalisation — constate sur un ticket, pas derive ; source `docs/modules/semantique/socle.md`, 9) :
+  - `assets/styles/_socle.scss` — styles barre laterale/offcanvas ; `.socle-brand` y est partage entre flex-row (mobile) et flex-column (desktop)
+  - `src/Asset/ViteBasePathListener.php` — ecouteur qui reprefixe href/src des balises Vite par `Request::getBasePath()` sous un prefixe d'URL (recette)
   - `templates/base.html.twig` — gabarit de page, pose le theme initial via script inline avant le premier rendu
   - `assets/styles/_brand.scss` — charte de couleurs MILLIRIS, seule source qui surcharge Bootstrap avant compilation
   - `assets/controllers/theme_controller.js` — bascule clair/sombre Stimulus, lit/persiste `data-bs-theme` dans localStorage, suit le theme systeme
@@ -56,5 +58,19 @@ complete serait pire que pas de carte du tout.
     - l. 238, 7 lignes, 331 o — ## Documentation a produire
     - l. 245, 21 lignes, 949 o — ## Recette
     - l. 266, 93 lignes, 6 Ko — ## Points volontairement hors perimetre
-- **Code** (manifeste `paths:`) : aucun prefixe declare — le code de ce module n'est pas rattache.
+- **Code** (manifeste `paths:`, 2 prefixe(s)) :
+  - `assets/styles` — 3 fichier(s)
+  - `src/Asset` — 1 fichier(s)
+  - Roles (derives du chemin) : service 1, front (js / scss) 3.
+  - Fichiers (4 au total) :
+    - `assets/styles/_brand.scss` — front
+    - `assets/styles/_socle.scss` — front
+    - `assets/styles/app.scss` — front
+    - `src/Asset/ViteBasePathListener.php` — service
+- **Ce qui bouge avec ce module** (git, co-modification) — c'est le signal qui repond a
+  « qu'est-ce que je casse si je touche ca » :
+  - `config/packages/framework.yaml` — config, module non rattache — 1 commit(s) commun(s) avec `src/Asset/ViteBasePathListener.php`
+  - `config/packages/pentatrion_vite.yaml` — config, module non rattache — 1 commit(s) commun(s) avec `src/Asset/ViteBasePathListener.php`
+- **Tickets livres** (perimetre depose, 1) :
+  - #78 — SOCLE - LOT 1 — 58 fichier(s) — `c8bb1ff580805c474418f6a0a7a767e297a67a4c`
 
