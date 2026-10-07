@@ -1,4 +1,22 @@
 pentatrion_vite:
+    # ⚠️ LES CHEMINS D'ASSETS DE CE BUNDLE IGNORENT LA BASE DE LA REQUETE.
+    #
+    # Le bundle recopie tel quel le chemin lu dans
+    # public/build/.vite/entrypoints.json, soit `/build/assets/app-<hash>.css` :
+    # un chemin a la RACINE de l'hote, fige au build. Servie a la racine, la page
+    # est correcte ; servie sous un prefixe d'URL (environnement de recette du Dev
+    # Center : `/<app>/recette/<n>/`), le navigateur demande ce fichier a la racine
+    # de l'hote — donc au Dev Center, qui ne le porte pas : la page repond 200 et
+    # s'affiche NUE, sans CSS ni JavaScript. Les liens, eux, sont justes, parce
+    # qu'ils passent par le routeur Symfony, qui honore deja le prefixe : c'est ce
+    # qui rend le defaut trompeur.
+    #
+    # C'est App\Asset\ViteBasePathListener qui recolle la base de la requete sur
+    # chaque balise. On NE met PAS `absolute_url: true` (le reglage du bundle pour
+    # ce probleme) : il produirait des URL absolues scheme + hote compris, donc
+    # dependantes de `X-Forwarded-Host`/`-Proto`, avec blocage pour contenu mixte
+    # le jour ou le proxy passe en https sans annoncer le scheme. Voir le listener.
+
     # Laisse a false volontairement : si public/build/.vite/manifest.json n'a pas
     # encore ete produit (assets non construits), les balises sont simplement
     # omises au lieu de faire exploser le rendu. C'est ce qui permet a
