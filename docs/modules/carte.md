@@ -5,7 +5,7 @@
 > tickets livres. Rien n'y est devine, et rien n'y est exhaustif : ce sont des POINTS
 > D'ENTREE pour ne pas fouiller le depot. Si ton travail t'emmene ailleurs, vas-y.
 >
-> **Fraicheur** — derivee de `f02cb1503b17` le 2026-10-07 20:07, 0 commit(s) de retard. Avant de t'y fier : `git rev-parse HEAD` — si le
+> **Fraicheur** — derivee de `e3a3cace7bae` le 2026-10-08 04:37, 0 commit(s) de retard. Avant de t'y fier : `git rev-parse HEAD` — si le
 > SHA differe de celui-ci, cette carte est un INDEX POSSIBLEMENT PERIME : les chemins qu'elle
 > nomme restent de bons points de depart, ses compteurs ne sont plus des mesures.
 >
@@ -14,7 +14,7 @@
 > chemin, ou ce qui bouge avec lui : `Grep` ce chemin dans ce fichier. Chaque ligne porte sa
 > PROVENANCE entre parentheses (manifeste / routeur / git / ticket) — ce qui est derive est
 > verifiable. Les seules lignes REDIGEES sont celles du volet **Roles ecrits** d'un module :
-> 9 ligne(s) sur 1 module(s), ecrite(s) par l'agent de finalisation d'un ticket qui venait de
+> 19 ligne(s) sur 2 module(s), ecrite(s) par l'agent de finalisation d'un ticket qui venait de
 > toucher le fichier cite (source append-only : `docs/modules/semantique/`). Elles disent un CONSTAT, pas une derivation.
 >
 > **Poids** — plafond `carte_max_bytes` = 150 Ko. La carte n'est JAMAIS decoupee (le decoupage
@@ -28,13 +28,14 @@ complete serait pire que pas de carte du tout.
 
 - VOLET ECRANS ABSENT : les ecrans se derivent du routeur Symfony de l'application qui execute, et les routes d'un depot client n'y sont pas. Aucun ecran n'est donc rattache ici — ce qui ne veut pas dire que cette application n'en a pas.
 
-## Sommaire adresse — 1 module(s)
+## Sommaire adresse — 2 module(s)
 
-- `socle` — l. 35, 43 lignes, 3 Ko — Socle
+- `socle` — l. 36, 52 lignes, 5 Ko — Socle
+- `socle.clients` — l. 88, 32 lignes, 3 Ko — Clients
 
 ## socle — Socle
 
-- **Place** (manifeste) : racine de l'arborescence.
+- **Place** (manifeste) : racine de l'arborescence ; sous-modules `socle.clients`.
 - **Roles ecrits** (ecrit par la finalisation — constate sur un ticket, pas derive ; source `docs/modules/semantique/socle.md`, 9) :
   - `assets/styles/_socle.scss` — styles barre laterale/offcanvas ; `.socle-brand` y est partage entre flex-row (mobile) et flex-column (desktop)
   - `src/Asset/ViteBasePathListener.php` — ecouteur qui reprefixe href/src des balises Vite par `Request::getBasePath()` sous un prefixe d'URL (recette)
@@ -69,8 +70,49 @@ complete serait pire que pas de carte du tout.
     - `src/Asset/ViteBasePathListener.php` — service
 - **Ce qui bouge avec ce module** (git, co-modification) — c'est le signal qui repond a
   « qu'est-ce que je casse si je touche ca » :
-  - `config/packages/framework.yaml` — config, module non rattache — 1 commit(s) commun(s) avec `src/Asset/ViteBasePathListener.php`
+  - `config/bundles.php` — config, module non rattache — 1 commit(s) commun(s) avec `assets/styles/_socle.scss`
+  - `config/packages/framework.yaml` — config, module non rattache — 1 commit(s) commun(s) avec `assets/styles/_socle.scss`
+  - `config/packages/mailer.yaml` — config, module non rattache — 1 commit(s) commun(s) avec `assets/styles/_socle.scss`
   - `config/packages/pentatrion_vite.yaml` — config, module non rattache — 1 commit(s) commun(s) avec `src/Asset/ViteBasePathListener.php`
-- **Tickets livres** (perimetre depose, 1) :
+  - `config/packages/security.yaml` — config, module non rattache — 1 commit(s) commun(s) avec `assets/styles/_socle.scss`
+  - `config/packages/twig.yaml` — config, module non rattache — 1 commit(s) commun(s) avec `assets/styles/_socle.scss`
+  - `config/services.yaml` — config, module non rattache — 1 commit(s) commun(s) avec `assets/styles/_socle.scss`
+  - `migrations/.gitignore` — migration, module non rattache — 1 commit(s) commun(s) avec `assets/styles/_socle.scss`
+  - `migrations/Version20261007200000.php` — migration, module non rattache — 1 commit(s) commun(s) avec `assets/styles/_socle.scss`
+  - `src/Command/CreateUserCommand.php` — commande, module non rattache — 1 commit(s) commun(s) avec `assets/styles/_socle.scss`
+  - … et 1 voisin(s) de moindre poids, non listes (liste bornee).
+- **Tickets livres** (perimetre depose, 2) :
+  - #80 — SOCLE - LOT 1 (amelioration) — 11 fichier(s) — `ee3a10abdc4ed173202b1e78c0647a6459c19efe`
   - #78 — SOCLE - LOT 1 — 58 fichier(s) — `c8bb1ff580805c474418f6a0a7a767e297a67a4c`
+
+## socle.clients — Clients
+
+- **Place** (manifeste) : parent `socle`.
+- **Roles ecrits** (ecrit par la finalisation — constate sur un ticket, pas derive ; source `docs/modules/semantique/socle.clients.md`, 10) :
+  - `templates/_partials/topbar.html.twig` — lit `app.user` pour afficher l'identite reelle (initiales, nom, societe, role)
+  - `tests/Support/NeedsTestDatabase.php` — trait qui saute les tests fonctionnels authentifies si la base de test est absente
+  - `config/packages/security.yaml` — pare-feu, access_control, authenticator `login_link` natif Symfony
+  - `src/Command/CreateUserCommand.php` — commande `app:user:create`, amorce le premier compte (admin ou client)
+  - `src/Controller/SecurityController.php` — ecrans /connexion et de confirmation d'envoi, verifie le lien signe
+  - `src/Security/LoginFormEntryPoint.php` — redirige les requetes anonymes vers l'ecran de connexion
+  - `src/Security/LoginLinkSender.php` — envoie le lien de connexion signe, reponse identique email inconnu/inactif/panne SMTP (anti-enumeration)
+  - `src/Security/UserProvider.php` — fournisseur d'utilisateurs maison, recharge `is_active` a chaque requete (le fournisseur Doctrine ne le ferait pas)
+  - `src/Entity/Client.php` — entite `client` (code ERP + nom, cle unique avec l'ERP)
+  - `src/Entity/User.php` — entite `app_user` (mail, prenom, nom, is_active, roles, client non nul, relation EAGER vers Client)
+- **Documents** (manifeste, 1) — adresses pour `Read(offset, limit)` :
+  - `docs/specs/socle-clients_ajoute-une-couche-de-securite-sur-l-application-on-ne-peut-y-acceder-que-si-l-utilisateur-est-loggue.md` — Spec — 32 Ko — rattache (manifeste `docs:`)
+    - l. 1, 12 lignes, 686 o — # Ajoute une couche de securite sur l'application : on ne peut y acceder que si l'utilisateur est loggue
+    - l. 13, 4 lignes, 707 o — ## Intention
+    - l. 17, 16 lignes, 996 o — ## Ce que ce ticket livre, et ce qu'il ne livre pas
+    - l. 33, 59 lignes, 3 Ko — ## Modele de donnees
+    - l. 92, 74 lignes, 4 Ko — ## Comment on se logue
+    - l. 166, 27 lignes, 1 Ko — ## Rester loggue « sans date limite »
+    - l. 193, 20 lignes, 1 Ko — ## Desactiver un compte prend effet tout de suite
+    - l. 213, 24 lignes, 973 o — ## Le mur
+    - l. 237, 47 lignes, 3 Ko — ## Mail de connexion
+    - l. 284, 33 lignes, 1 Ko — ## Commande console : le seul moyen de creer un compte
+    - l. 317, 19 lignes, 952 o — ## En-tete : brancher l'identite reelle
+    - l. 336, 21 lignes, 1 Ko — ## Dependances et configuration a ajouter
+    - … et 3 section(s) non listees (sommaire borne) : ouvre le document.
+- **Code** (manifeste `paths:`) : aucun prefixe declare — le code de ce module n'est pas rattache.
 
