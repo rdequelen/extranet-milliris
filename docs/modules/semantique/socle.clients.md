@@ -1,0 +1,10 @@
+- `src/Entity/User.php` — entite `app_user` (mail, prenom, nom, is_active, roles, client non nul, relation EAGER vers Client)
+- `src/Entity/Client.php` — entite `client` (code ERP + nom, cle unique avec l'ERP)
+- `src/Security/UserProvider.php` — fournisseur d'utilisateurs maison, recharge `is_active` a chaque requete (le fournisseur Doctrine ne le ferait pas)
+- `src/Security/LoginLinkSender.php` — envoie le lien de connexion signe, reponse identique email inconnu/inactif/panne SMTP (anti-enumeration)
+- `src/Security/LoginFormEntryPoint.php` — redirige les requetes anonymes vers l'ecran de connexion
+- `src/Controller/SecurityController.php` — ecrans /connexion et de confirmation d'envoi, verifie le lien signe
+- `src/Command/CreateUserCommand.php` — commande `app:user:create`, amorce le premier compte (admin ou client)
+- `config/packages/security.yaml` — pare-feu, access_control, authenticator `login_link` natif Symfony
+- `tests/Support/NeedsTestDatabase.php` — trait qui saute les tests fonctionnels authentifies si la base de test est absente
+- `templates/_partials/topbar.html.twig` — lit `app.user` pour afficher l'identite reelle (initiales, nom, societe, role)

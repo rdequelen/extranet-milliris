@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{#
+    Accuse d'envoi. Sa formulation est VOLONTAIREMENT au conditionnel (« si un
+    compte existe ») : cette page est servie a l'identique pour une adresse
+    connue, inconnue ou desactivee. C'est ce qui empeche d'utiliser le
+    formulaire comme annuaire des clients de MILLIRIS.
+#}
+
+{% block title %}Lien envoye — Extranet MILLIRIS{% endblock %}
+
+{% block page %}
+    <main class="socle-auth" id="socle-content">
+        <div class="socle-auth__card card">
+            <div class="card-body p-4 p-sm-5 text-center">
+                <p class="socle-auth__icon" aria-hidden="true">
+                    <i class="bi bi-envelope-check"></i>
+                </p>
+
+                <h1 class="h4 mb-3">Regardez votre boite de reception</h1>
+
+                <p class="text-body-secondary">
+                    Si un compte existe pour cette adresse, un courriel contenant votre lien de
+                    connexion vient de partir. Ce lien est valable <strong>5 minutes</strong>.
+                </p>
+
+                <p class="small text-body-secondary">
+                    Rien recu au bout de quelques minutes ? Verifiez vos indesirables, puis
+                    redemandez un lien.
+                </p>
+
+                <a class="btn btn-outline-secondary" href="{{ path('app_login') }}">
+                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Redemander un lien
+                </a>
+            </div>
+        </div>
+    </main>
+{% endblock %}

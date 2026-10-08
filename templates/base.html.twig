@@ -37,6 +37,14 @@
         {% endblock %}
     </head>
     <body>
+        {#
+            `page` est la charpente de l'application CONNECTEE (menu, en-tete,
+            toasts). Les ecrans publics — le tunnel de connexion — surchargent ce
+            bloc par un cadre centre : ils n'ont ni menu ni identite a afficher,
+            et l'en-tete lit `app.user`, qui est nul avant la connexion.
+            Tout le <head> (theme, assets Vite) reste commun aux deux.
+        #}
+        {% block page %}
         <a class="visually-hidden-focusable btn btn-primary m-2" href="#socle-content">Aller au contenu</a>
 
         <div class="socle-shell">
@@ -62,5 +70,6 @@
         </div>
 
         {% include '_partials/toasts.html.twig' %}
+        {% endblock %}
     </body>
 </html>

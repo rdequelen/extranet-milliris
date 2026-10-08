@@ -2,21 +2,30 @@
 # Les dependances se configurent dans packages/.
 
 parameters:
-    # Bloc identite factice de l'en-tete. Le ticket « securite » remplacera cette
-    # valeur par le client reellement authentifie, sans toucher au gabarit.
-    app.client_name: 'Societe Cliente SAS'
-    app.client_role: 'Compte de demonstration'
+    # L'identite affichee dans l'en-tete n'est plus un parametre : le gabarit lit
+    # l'utilisateur authentifie (`app.user`), pose par le pare-feu. Les anciens
+    # `app.client_name` / `app.client_role` ont disparu avec le bloc factice.
+
+    # Expediteur des courriels sortants (aujourd'hui : le lien de connexion).
+    # Format RFC accepte : « Libelle <adresse> » ou juste « adresse ».
+    app.mail_from: '%env(MAILER_FROM)%'
 
 services:
     _defaults:
         autowire: true
         autoconfigure: true
+        bind:
+            # Deux scalaires que l'autowiring ne peut pas deviner (lus par
+            # App\Security\LoginLinkSender).
+            string $mailFrom: '%app.mail_from%'
+            bool $debug: '%kernel.debug%'
 
     App\:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
-            # Les entites Doctrine arrivent au lot 2 ; elles ne sont pas des services.
+            # Les entites Doctrine ne sont pas des services : elles se
+            # construisent avec des scalaires et vivent dans l'EntityManager.
             - '../src/Entity/'
             # Objets de valeur et enums du catalogue de modules : ils se
             # construisent avec des scalaires, l'autoconfiguration n'a rien a

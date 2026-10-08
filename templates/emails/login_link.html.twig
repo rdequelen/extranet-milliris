@@ -1,0 +1,58 @@
+{#
+    Courriel portant le lien de connexion.
+
+    Volontairement AUTONOME (il n'etend pas base.html.twig) et en styles en
+    ligne : aucun client de messagerie ne charge nos feuilles de style, et la
+    plupart ignorent les <style> en en-tete. Pas d'image non plus — une image
+    bloquee ne doit pas empecher de comprendre le message.
+
+    Contexte : user (App\Entity\User), url (lien signe), expires_at.
+#}
+<!DOCTYPE html>
+<html lang="fr">
+    <body style="margin:0;padding:24px;background:#f4f6f9;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;color:#1f2933;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:8px;">
+            <tr>
+                <td style="padding:28px 28px 8px;">
+                    <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#1B3B5A;">
+                        MILLIRIS — Extranet client
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:8px 28px 0;">
+                    <h1 style="margin:0 0 12px;font-size:20px;font-weight:600;color:#1f2933;">
+                        Bonjour {{ user.firstName|default(user.displayName) }},
+                    </h1>
+                    <p style="margin:0 0 20px;font-size:15px;line-height:1.5;">
+                        Voici votre lien de connexion a l'extranet. Il est valable
+                        <strong>5 minutes</strong> (jusqu'a {{ expires_at|date('H:i') }}) et ne
+                        doit etre utilise que par vous.
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0 28px 20px;">
+                    <a href="{{ url }}"
+                       style="display:inline-block;padding:12px 20px;background:#1B3B5A;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;border-radius:8px;">
+                        Me connecter
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0 28px 28px;">
+                    <p style="margin:0 0 8px;font-size:12px;line-height:1.5;color:#5a6b7c;">
+                        Si le bouton ne fonctionne pas, copiez cette adresse dans votre navigateur :
+                    </p>
+                    <p style="margin:0 0 20px;font-size:12px;line-height:1.5;word-break:break-all;color:#5a6b7c;">
+                        {{ url }}
+                    </p>
+                    <p style="margin:0;font-size:12px;line-height:1.5;color:#5a6b7c;">
+                        Vous n'avez pas demande ce lien ? Ignorez ce message : sans clic, il expire
+                        tout seul et aucun acces n'est ouvert.
+                    </p>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
